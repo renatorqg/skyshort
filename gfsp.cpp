@@ -18,9 +18,20 @@ Mat ch[3];
 
 // pyr means:
 // My pyramid
-//          6 layers
+//          6 layers ( each layer is a scale)
 //          7 features
 //               
+// pyr[i][j]
+// index i corresponds to layer
+// index j corresponds to features as fallow:
+
+#define GRAY 2
+#define RED 3
+#define GREEN 4
+#define BLUE 5
+#define YELLOW 6
+
+
 std::vector <std::vector <Mat> > pyr(6, std::vector <Mat> (7));
 
 Mat results;
@@ -28,6 +39,19 @@ Mat gabor_output;
 
 //char* window_name = "Pyramids Demo";
 
+
+
+// function to exctract regionals averages
+
+int regionals_averages(Mat res) {
+  for (int ri = 0; ri < res.cols; ri += res.cols/3) {
+    for (int rj = 0; rj < res.rows; rj += res.rows/3) {
+//      for (int i = ri; i < r
+    }
+  } //
+
+
+}
 
 /**
  * @function main
@@ -55,17 +79,18 @@ int main( int argc, char** argv )
   // LAYER ZERO
   pyr[0][0] = src;
   pyr[0][1] = src;
-  cvtColor (src, pyr[0][2], CV_BGR2GRAY);
+  cvtColor (src, pyr[0][GRAY], CV_BGR2GRAY);
   split(src,ch);
   // RED
-  pyr[0][3] = ch[2] - (ch[1] + ch[0])/2;
+  pyr[0][RED] = ch[2] - (ch[1] + ch[0])/2;
   // GREEN
-  pyr[0][4] = ch[1] - (ch[2] + ch[0])/2;
+  pyr[0][GREEN] = ch[1] - (ch[2] + ch[0])/2;
   // BLUE
-  pyr[0][5] = ch[0] - (ch[2] + ch[1])/2;
+  pyr[0][BLUE] = ch[0] - (ch[2] + ch[1])/2;
   // YELLOW
-  pyr[0][6] = (ch[2] + ch[1])/2 - abs(ch[2] - ch[1])/2 - ch[0];
+  pyr[0][YELLOW] = (ch[2] + ch[1])/2 - abs(ch[2] - ch[1])/2 - ch[0];
 
+  // other layers of pyramid
   for (int i = 0; i < 5; i++) {
     pyrDown (pyr[i][0], pyr[i+1][0], Size (pyr[i][0].cols/2, pyr[i][0].rows/2));
     tmp1 = pyr[i+1][0];
@@ -74,16 +99,16 @@ int main( int argc, char** argv )
       tmp1 = tmp2;
     }
     pyr[i+1][1] = tmp1;
-    cvtColor (tmp1, pyr[i+1][2], CV_BGR2GRAY);
+    cvtColor (tmp1, pyr[i+1][GRAY], CV_BGR2GRAY);
     split (tmp1, ch);
     // RED
-    pyr[i+1][3] = ch[2] - (ch[1] + ch[0])/2;
+    pyr[i+1][RED] = ch[2] - (ch[1] + ch[0])/2;
     // GREEN
-    pyr[i+1][4] = ch[1] - (ch[2] + ch[0])/2;
+    pyr[i+1][GREEN] = ch[1] - (ch[2] + ch[0])/2;
     // BLUE
-    pyr[i+1][5] = ch[0] - (ch[2] + ch[1])/2;
+    pyr[i+1][BLUE] = ch[0] - (ch[2] + ch[1])/2;
     // YELLOW
-    pyr[i+1][6] = (ch[2] + ch[1])/2 - abs(ch[2] - ch[1])/2 - ch[0];
+    pyr[i+1][YELLOW] = (ch[2] + ch[1])/2 - abs(ch[2] - ch[1])/2 - ch[0];
   }
  
 // building the features
@@ -149,7 +174,7 @@ int main( int argc, char** argv )
 
     resize( magnitude, saliencyMap, src.size(), 0, 0, INTER_LINEAR );
 
-    // visualize saliency map
+    // visualize saliency map of Spectral Residual
     char win_name[15];
     sprintf(win_name, "SR_layer%i",i);
     imshow( win_name, saliencyMap );
@@ -159,12 +184,12 @@ int main( int argc, char** argv )
       { return 0; }
     destroyAllWindows();
 
-// /*
+// /* Building the spatial features
     for (int j = i+1; j <=5; j++) {
       int c;
       char window_name[15];
       sprintf(window_name, "gray%d-%d",i,j);
-      absdiff (pyr[i][2], pyr[j][2], results);
+      absdiff (pyr[i][GRAY], pyr[j][GRAY], results);
       imshow (window_name, results);
       c = waitKey(0);
       if( (char)c == 27 )
@@ -195,7 +220,7 @@ int main( int argc, char** argv )
       }
 
       sprintf(window_name, "R_G%d-%d",i,j);
-      absdiff (pyr[i][3]-pyr[i][4],pyr[j][4]-pyr[j][3], results);
+      absdiff (pyr[i][RED]-pyr[i][GREEN],pyr[j][GREEN]-pyr[j][RED], results);
       imshow (window_name, results);
       c = waitKey(0);
       if( (char)c == 27 )
@@ -203,7 +228,7 @@ int main( int argc, char** argv )
 
       destroyAllWindows();
       sprintf(window_name, "B_Y%d-%d",i,j);
-      absdiff (pyr[i][5]-pyr[i][6],pyr[j][6]-pyr[j][5], results);
+      absdiff (pyr[i][BLUE]-pyr[i][YELLOW], pyr[j][YELLOW]-pyr[j][BLUE], results);
       imshow (window_name, results);
       c = waitKey(0);
       if( (char)c == 27 )
