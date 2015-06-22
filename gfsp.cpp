@@ -42,15 +42,30 @@ Mat gabor_output;
 
 
 // function to exctract regionals averages
+// Mat res is a single channel image
+double * regionals_averages(Mat res) {
 
-int regionals_averages(Mat res) {
-  for (int ri = 0; ri < res.cols; ri += res.cols/3) {
+  static double average[9];
+  int k = 0;
+  int cont = 0;
+  for (int ri = 0; ri < res.cols-3; ri += res.cols/3) { //need to subtract 3 because 640/3 is not a round number
     for (int rj = 0; rj < res.rows; rj += res.rows/3) {
-//      for (int i = ri; i < r
+      
+      printf("Dentro da funcao, antes do roi, ri = %d, rj = %d, res.cols/3 = %d, res.rows/3 = %d\n", ri, rj, res.cols/3, res.rows/3);
+      Mat roiImg = res(Rect(ri,rj,res.cols/3,res.rows/3));
+      imshow("ROI", roiImg);
+      cv::Scalar media;
+      media = mean(roiImg);
+      printf("Dentro da funcao, depois do roi, media = %f\n",media[0]);
+      int cc;
+      cc = waitKey(0);
+      if( (char)cc == 27 )
+        { return 0; }
+      average[k] = media[0];
+      k++;
     }
   } //
-
-
+  return average;
 }
 
 /**
@@ -222,6 +237,14 @@ int main( int argc, char** argv )
       sprintf(window_name, "R_G%d-%d",i,j);
       absdiff (pyr[i][RED]-pyr[i][GREEN],pyr[j][GREEN]-pyr[j][RED], results);
       imshow (window_name, results);
+
+      // testing the average function
+      double *average;
+      average = regionals_averages(results);
+      for (int med = 0; med < 9; med++) {
+        printf("average%d = %lf.\n", med, average[med]);
+      }
+
       c = waitKey(0);
       if( (char)c == 27 )
         { return 0; }
