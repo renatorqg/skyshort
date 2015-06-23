@@ -49,7 +49,7 @@ double * regionals_averages(Mat res) {
   int k = 0;
   int cont = 0;
   for (int ri = 0; ri < res.cols-3; ri += res.cols/3) { //need to subtract 3 because 640/3 is not a round number
-    for (int rj = 0; rj < res.rows; rj += res.rows/3) {
+    for (int rj = 0; rj < res.rows-3; rj += res.rows/3) {
       
       printf("Dentro da funcao, antes do roi, ri = %d, rj = %d, res.cols/3 = %d, res.rows/3 = %d\n", ri, rj, res.cols/3, res.rows/3);
       Mat roiImg = res(Rect(ri,rj,res.cols/3,res.rows/3));
