@@ -238,12 +238,21 @@ int main( int argc, char** argv )
       absdiff (pyr[i][RED]-pyr[i][GREEN],pyr[j][GREEN]-pyr[j][RED], results);
       imshow (window_name, results);
 
-      // testing the average function
+      // the average function
       double *average;
+      char filename[35];
+      FILE *fp;
       average = regionals_averages(results);
+//      sprintf(filename, "med");
+//      fp = fopen(filename, "w"); //mode "a" for append
       for (int med = 0; med < 9; med++) {
-        printf("average%d = %lf.\n", med, average[med]);
+        sprintf(filename, "R_G%d-%d-med%d",i,j,med);
+        fp = fopen(filename, "a"); //mode "a" for append
+        fprintf(fp,"%lf\n", average[med]);
+        fclose(fp);
+//        printf("media = %lf\n", average[med]);
       }
+//      fclose(fp);
 
       c = waitKey(0);
       if( (char)c == 27 )
