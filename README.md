@@ -13,4 +13,4 @@ List of implemented features:
 - Orientations, gabour-filters, various scales
 
 **frequency domain**
-- Spectral-Residual [Xiaodi Hou's](http://www.klab.caltech.edu/~xhou/papers/cvpr07.pdf) paper
+- Spectral-Residual [Xiaodi Hou's](http://www.klab.caltech.edu/~xhou/papers/cvpr07.pdf) paper, adapted from this [code](https://github.com/Itseez/opencv_contrib/blob/master/modules/saliency/src/staticSaliencySpectralResidual.cpp)
