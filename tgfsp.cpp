@@ -202,12 +202,12 @@ int main( int argc, char** argv )
       // visualize saliency map of Spectral Residual
       char win_name[15];
       sprintf(win_name, "SR_layer%i",i);
-//      imshow( win_name, saliencyMap );
+      imshow( win_name, saliencyMap );
       int cc;
-//      cc = waitKey(0);
-//      if( (char)cc == 27 )
-//        { return 0; }
-//      destroyAllWindows();
+      cc = waitKey(0);
+      if( (char)cc == 27 )
+        { return 0; }
+      destroyAllWindows();
 
 // /* Building the spatial features
       for (int j = i+1; j <=5; j++) {
@@ -221,8 +221,11 @@ int main( int argc, char** argv )
       //------------------------------------------------------//
         sprintf(window_name, "gray%d-%d",i,j);
         absdiff (pyr[i][GRAY], pyr[j][GRAY], results);
-//        imshow (window_name, results);
+        imshow (window_name, results);
         average = regionals_averages(results);
+      // testing if there is a folder call datapoints
+        if (!system("test -d ./datapoints"))
+          system("mkdir ./datapoints");
         for (int sec = 0; sec < 9; sec++) {
           sprintf(filename, "./datapoints/gray/%d-%d-sec%d",i,j,sec);
           fp = fopen(filename, "a"); //mode "a" for append
@@ -235,10 +238,10 @@ int main( int argc, char** argv )
           fprintf(fp,"%lf\n", average[sec]);
           fclose(fp);
         }
-//        c = waitKey(0);
-//        if( (char)c == 27 )
-//          { return 0; }
-//        destroyAllWindows();
+        c = waitKey(0);
+        if( (char)c == 27 )
+          { return 0; }
+        destroyAllWindows();
 
         // gabor-filters 0 45 90 135
         Mat gaborKernel;
@@ -256,7 +259,7 @@ int main( int argc, char** argv )
 //          imshow(window_name, gaborKernel);
           filter2D(results, gabor_output, ddepth, gaborKernel);
           sprintf(window_name, "gabor%d-gray%d-%d",180*k/4,i,j);
-//          imshow(window_name, gabor_output);
+          imshow(window_name, gabor_output);
           average = regionals_averages(gabor_output);
           for (int sec = 0; sec < 9; sec++) {
             sprintf(filename, "./datapoints/gabor%d/%d-%d-sec%d",180*k/4,i,j,sec);
@@ -271,15 +274,15 @@ int main( int argc, char** argv )
             fprintf(fp,"%lf\n", average[sec]);
             fclose(fp);
           }
-//          c = waitKey(0);
-//          if( (char)c == 27 )
-//            { return 0; }
-//          destroyAllWindows();
+          c = waitKey(0);
+          if( (char)c == 27 )
+            { return 0; }
+          destroyAllWindows();
         }
 
         sprintf(window_name, "R_G%d-%d",i,j);
         absdiff (pyr[i][RED]-pyr[i][GREEN],pyr[j][GREEN]-pyr[j][RED], results);
-//        imshow (window_name, results);
+        imshow (window_name, results);
         average = regionals_averages(results);
         for (int sec = 0; sec < 9; sec++) {
           sprintf(filename, "./datapoints/R_G/%d-%d-sec%d",i,j,sec);
@@ -294,14 +297,14 @@ int main( int argc, char** argv )
           fprintf(fp,"%lf\n", average[sec]);
           fclose(fp);
         }
-//        c = waitKey(0);
-//        if( (char)c == 27 )
-//          { return 0; }
-//        destroyAllWindows();
+        c = waitKey(0);
+        if( (char)c == 27 )
+          { return 0; }
+        destroyAllWindows();
 
         sprintf(window_name, "B_Y%d-%d",i,j);
         absdiff (pyr[i][BLUE]-pyr[i][YELLOW], pyr[j][YELLOW]-pyr[j][BLUE], results);
-//        imshow (window_name, results);
+        imshow (window_name, results);
         average = regionals_averages(results);
         for (int sec = 0; sec < 9; sec++) {
           sprintf(filename, "./datapoints/B_Y/%d-%d-sec%d",i,j,sec);
@@ -316,10 +319,10 @@ int main( int argc, char** argv )
           fprintf(fp,"%lf\n", average[sec]);
           fclose(fp);
         }
-//        c = waitKey(0);
-//        if( (char)c == 27 )
-//          { return 0; }
-//        destroyAllWindows();
+        c = waitKey(0);
+        if( (char)c == 27 )
+          { return 0; }
+        destroyAllWindows();
       }
 // */
     }//end of building features
