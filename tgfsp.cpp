@@ -175,13 +175,15 @@ Mat spectrum_residual(int i, std::vector <std::vector <Mat> > &pyr)
   minMaxLoc( magnitude, &minVal, &maxVal );
   
   magnitude = magnitude / maxVal;
-  magnitude.convertTo( magnitude, CV_32F );
+  magnitude.convertTo( magnitude, CV_32F);
+  minMaxLoc( magnitude, &minVal, &maxVal );
+  magnitude.convertTo( magnitude, CV_8U, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal-minVal));
 
   Mat saliencyMap;
 
   resize( magnitude, saliencyMap, pyr[0][0].size(), 0, 0, INTER_LINEAR );
-  
- return saliencyMap;
+ 
+  return saliencyMap;
 }
 
 void display(char *win_name, Mat results_to_show)
