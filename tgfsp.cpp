@@ -179,7 +179,7 @@ Mat spectrum_residual(int i, std::vector <std::vector <Mat> > &pyr)
 
   Mat saliencyMap;
 
-  resize( magnitude, saliencyMap, src.size(), 0, 0, INTER_LINEAR );
+  resize( magnitude, saliencyMap, pyr[0][0].size(), 0, 0, INTER_LINEAR );
   
  return saliencyMap;
 }
