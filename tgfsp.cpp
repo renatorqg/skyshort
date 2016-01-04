@@ -408,7 +408,7 @@ int main( int argc, char** argv )
                 fprintf(fp,"%lf\n", average[sec]);
                 fclose(fp);
               }
-              sprintf(filename, "./datapoints/motion-gabor%d/fi%02d-%d-%d.png",i_img,180*k/4,i,j);
+              sprintf(filename, "./datapoints/motion-gabor%d/fi%02d-%d-%d.png",180*k/4,i_img,i,j);
               imwrite(filename, results);
             }
 
