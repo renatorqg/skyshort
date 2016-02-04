@@ -216,7 +216,10 @@ int main( int argc, char** argv )
   char imagename[30];
 // src = imread( "./front-front/l00039.png", CV_LOAD_IMAGE_GRAYSCALE );
 
-  for (int i_img = 35; i_img < 53; i_img++) {
+  int start_frame = 35;
+  int stop_frame = 53; 
+
+  for (int i_img = start_frame; i_img < stop_frame; i_img++) {
 
 //    sprintf(imagename, "./front-front/r%05d.png",i_img);
     sprintf(imagename, "./front-front/l%05d.png",i_img);
@@ -241,7 +244,7 @@ int main( int argc, char** argv )
       {
 ////////// spectrum residual ///////////////////////////////////////////////////
         resultsEven = spectrum_residual( i, pyr1);
-//        sprintf(win_name, "img%d-SR_layer%i", i_img, i);
+//        sprintf(win_name, "img%d-SR_layer%i", i_img-start_frame, i);
 //        display(win_name, resultsEven);
         regionals_averages(resultsEven, average);
         for (int sec = 0; sec < 9; sec++) 
@@ -258,7 +261,7 @@ int main( int argc, char** argv )
           fprintf(fp,"%lf\n", average[sec]);
           fclose(fp);
         }
-        sprintf(filename, "./datapoints/sr/fi%02d-%d.png",i_img,i);
+        sprintf(filename, "./datapoints/sr/fi%02d-%d.png",i_img-start_frame,i);
         imwrite(filename, resultsEven);
 
         if (pyr1[0][0].data && pyr2[0][0].data)
@@ -266,7 +269,7 @@ int main( int argc, char** argv )
 ////////// motion spectrum residual ///////////////////////////////////////////
           resultsOdd = spectrum_residual( i, pyr2);
           absdiff(resultsEven, resultsOdd, results);
-//          sprintf(win_name, "Motion-img%d-SR_layer%i", i_img, i);
+//          sprintf(win_name, "Motion-img%d-SR_layer%i", i_img-start_frame, i);
 //          display(win_name, results);
           regionals_averages(results, average);
           for (int sec = 0; sec < 9; sec++) 
@@ -283,13 +286,13 @@ int main( int argc, char** argv )
             fprintf(fp,"%lf\n", average[sec]);
             fclose(fp);
           }
-          sprintf(filename, "./datapoints/motion-sr/fi%02d-%d.png",i_img,i);
+          sprintf(filename, "./datapoints/motion-sr/fi%02d-%d.png",i_img-start_frame,i);
           imwrite(filename, results);
 
 
 ////////// pure motion of RGB not filtered images ////////////////////////////////
           absdiff(pyr2[i][SIG_RGB],pyr1[i][SIG_RGB], results);
-//          sprintf(win_name, "Motion-img%d-RGB%i", i_img, i);
+//          sprintf(win_name, "Motion-img%d-RGB%i", i_img-start_frame, i);
 //          display(win_name, results);
           regionals_averages(results, average);
           for (int sec = 0; sec < 9; sec++) 
@@ -306,7 +309,7 @@ int main( int argc, char** argv )
             fprintf(fp,"%lf\n", average[sec]);
             fclose(fp);
           }
-          sprintf(filename, "./datapoints/motion-RGB/fi%02d-%d.png",i_img,i);
+          sprintf(filename, "./datapoints/motion-RGB/fi%02d-%d.png",i_img-start_frame,i);
           imwrite(filename, results);
 
           // making combination between layers 0-1, 0-2, 0-3, 0-4, 0-5, 1-2, 1-3 and so on
@@ -314,7 +317,7 @@ int main( int argc, char** argv )
           { 
 ////////////// gray /////////////////////////////////////////////////////////////
             absdiff (pyr1[i][GRAY], pyr1[j][GRAY], resultsEven); // pyr1 - Even
-//            sprintf(win_name, "img%d-gray%d-%d",i_img,i,j);
+//            sprintf(win_name, "img%d-gray%d-%d",i_img-start_frame,i,j);
 //            display(win_name, resultsEven);
             regionals_averages(resultsEven, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -331,14 +334,14 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/gray/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/gray/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, resultsEven);
 
 
 ////////////// motion gray /////////////////////////////////////////////////////////
             absdiff (pyr2[i][GRAY], pyr2[j][GRAY], resultsOdd); // pyr2 - Odd 
             absdiff (resultsEven, resultsOdd, results);
-//            sprintf(win_name, "Motion-img%d-GRAY%d-%d",i_img, i, j);
+//            sprintf(win_name, "Motion-img%d-GRAY%d-%d",i_img-start_frame, i, j);
 //            display(win_name, results);
             regionals_averages(results, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -355,7 +358,7 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/motion-gray/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/motion-gray/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, results);
 
 ////////////// gabor-filters 0 45 90 135 ////////////////////////////////////////////
@@ -374,7 +377,7 @@ int main( int argc, char** argv )
 //              imshow(window_name, gaborKernel);
               filter2D(resultsEven, gabor_outputEven, ddepth, gaborKernel);
               filter2D(resultsOdd, gabor_outputOdd, ddepth, gaborKernel);
-//              sprintf(win_name, "img%d-gabor%d-gray%d-%d-Odd",i_img,180*k/4,i,j);
+//              sprintf(win_name, "img%d-gabor%d-gray%d-%d-Odd",i_img-start_frame,180*k/4,i,j);
 //              display(win_name, gabor_outputEven);
               regionals_averages(gabor_outputEven, average);
               for (int sec = 0; sec < 9; sec++) {
@@ -390,11 +393,11 @@ int main( int argc, char** argv )
                 fprintf(fp,"%lf\n", average[sec]);
                 fclose(fp);
               }
-              sprintf(filename, "./datapoints/gabor%d/fi%02d-%d-%d.png",180*k/4,i_img,i,j);
+              sprintf(filename, "./datapoints/gabor%d/fi%02d-%d-%d.png",180*k/4,i_img-start_frame,i,j);
               imwrite(filename, gabor_outputEven);
 //////////////// motion gabor////////////////////////////////////////////////////////////
               absdiff (gabor_outputEven, gabor_outputOdd, results);
-//              sprintf(win_name, "img%d-motion-gabor%d-gray%d-%d.png",i_img,180*k/4,i,j);
+//              sprintf(win_name, "img%d-motion-gabor%d-gray%d-%d.png",i_img-start_frame,180*k/4,i,j);
 //              display(win_name, results);
               regionals_averages(results, average);
               for (int sec = 0; sec < 9; sec++) {
@@ -410,13 +413,13 @@ int main( int argc, char** argv )
                 fprintf(fp,"%lf\n", average[sec]);
                 fclose(fp);
               }
-              sprintf(filename, "./datapoints/motion-gabor%d/fi%02d-%d-%d.png",180*k/4,i_img,i,j);
+              sprintf(filename, "./datapoints/motion-gabor%d/fi%02d-%d-%d.png",180*k/4,i_img-start_frame,i,j);
               imwrite(filename, results);
             }
 
             // R_G
             absdiff (pyr1[i][RED]-pyr1[i][GREEN],pyr1[j][GREEN]-pyr1[j][RED], resultsEven); //pyr1 - Even
-//            sprintf(win_name, "img%d-R_G%d-%d",i_img,i,j);
+//            sprintf(win_name, "img%d-R_G%d-%d",i_img-start_frame,i,j);
 //            display(win_name, resultsEven);
             regionals_averages(resultsEven, average);
             for (int sec = 0; sec < 9; sec++) {
@@ -432,13 +435,13 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/R_G/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/R_G/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, resultsEven);
 
             // motion R_G
             absdiff (pyr2[i][RED]-pyr2[i][GREEN],pyr2[j][GREEN]-pyr2[j][RED], resultsOdd); //pyr2 - Odd
             absdiff (resultsEven, resultsOdd, results);
-//            sprintf(win_name, "Motion-img%d-R_G%d-%d",i_img, i, j);
+//            sprintf(win_name, "Motion-img%d-R_G%d-%d",i_img-start_frame, i, j);
 //            display(win_name, results);
             regionals_averages(results, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -455,12 +458,12 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/motion-R_G/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/motion-R_G/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, results);
 
             // B_Y
             absdiff (pyr1[i][BLUE]-pyr1[i][YELLOW], pyr1[j][YELLOW]-pyr1[j][BLUE], resultsEven); //pyr1 - Even
-//            sprintf(win_name, "img%d-B_Y%d-%d",i_img,i,j);
+//            sprintf(win_name, "img%d-B_Y%d-%d",i_img-start_frame,i,j);
 //            display(win_name, resultsEven);
             regionals_averages(resultsEven, average);
             for (int sec = 0; sec < 9; sec++) {
@@ -476,13 +479,13 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/B_Y/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/B_Y/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, resultsEven);
 
             // motion B_Y
             absdiff (pyr2[i][BLUE]-pyr2[i][YELLOW], pyr2[j][YELLOW]-pyr2[j][BLUE], resultsOdd); //pyr2 - Odd
             absdiff (resultsOdd, resultsEven, results);
-//            sprintf(win_name, "Motion-img%d-B_Y%d-%d",i_img, i, j);
+//            sprintf(win_name, "Motion-img%d-B_Y%d-%d",i_img-start_frame, i, j);
 //            display(win_name, results);
             regionals_averages(results, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -499,7 +502,7 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/motion-B_Y/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/motion-B_Y/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, results);
           } // end of for j
  
@@ -516,7 +519,7 @@ int main( int argc, char** argv )
       {
 ////////// spectrum residual ///////////////////////////////////////////////////
         resultsOdd = spectrum_residual( i, pyr2);
-//        sprintf(win_name, "img%d-SR_layer%i", i_img, i);
+//        sprintf(win_name, "img%d-SR_layer%i", i_img-start_frame, i);
 //        display(win_name, resultsOdd);
         regionals_averages(resultsOdd, average);
         for (int sec = 0; sec < 9; sec++) 
@@ -533,7 +536,7 @@ int main( int argc, char** argv )
           fprintf(fp,"%lf\n", average[sec]);
           fclose(fp);
         }
-        sprintf(filename, "./datapoints/sr/fi%02d-%d.png",i_img,i);
+        sprintf(filename, "./datapoints/sr/fi%02d-%d.png",i_img-start_frame,i);
         imwrite(filename, resultsOdd);
 
         if (pyr1[0][0].data && pyr2[0][0].data)
@@ -541,7 +544,7 @@ int main( int argc, char** argv )
 ////////// motion spectrum residual ///////////////////////////////////////////
           resultsEven = spectrum_residual( i, pyr1);
           absdiff(resultsOdd, resultsEven, results);
-//          sprintf(win_name, "Motion-img%d-SR_layer%i", i_img, i);
+//          sprintf(win_name, "Motion-img%d-SR_layer%i", i_img-start_frame, i);
 //          display(win_name, results);
           regionals_averages(results, average);
           for (int sec = 0; sec < 9; sec++) 
@@ -558,13 +561,13 @@ int main( int argc, char** argv )
             fprintf(fp,"%lf\n", average[sec]);
             fclose(fp);
           }
-          sprintf(filename, "./datapoints/motion-sr/fi%02d-%d.png",i_img,i);
+          sprintf(filename, "./datapoints/motion-sr/fi%02d-%d.png",i_img-start_frame,i);
           imwrite(filename, results);
 
 
 ////////// pure motion of RGB not filtered images ////////////////////////////////
           absdiff(pyr2[i][SIG_RGB],pyr1[i][SIG_RGB], results);
-//          sprintf(win_name, "Motion-img%d-RGB%i", i_img, i);
+//          sprintf(win_name, "Motion-img%d-RGB%i", i_img-start_frame, i);
 //          display(win_name, results);
           regionals_averages(results, average);
           for (int sec = 0; sec < 9; sec++) 
@@ -581,7 +584,7 @@ int main( int argc, char** argv )
             fprintf(fp,"%lf\n", average[sec]);
             fclose(fp);
           }
-          sprintf(filename, "./datapoints/motion-RGB/fi%02d-%d.png",i_img,i);
+          sprintf(filename, "./datapoints/motion-RGB/fi%02d-%d.png",i_img-start_frame,i);
           imwrite(filename, results);
 
           // making combination between layers 0-1, 0-2, 0-3, 0-4, 0-5, 1-2, 1-3 and so on
@@ -589,7 +592,7 @@ int main( int argc, char** argv )
           { 
 ////////////// gray /////////////////////////////////////////////////////////////
             absdiff (pyr2[i][GRAY], pyr2[j][GRAY], resultsOdd); // pyr2 - Odd
-//            sprintf(win_name, "img%d-gray%d-%d",i_img,i,j);
+//            sprintf(win_name, "img%d-gray%d-%d",i_img-start_frame,i,j);
 //            display(win_name, resultsOdd);
             regionals_averages(resultsOdd, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -606,14 +609,14 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/gray/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/gray/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, resultsOdd);
 
 
 ////////////// motion gray /////////////////////////////////////////////////////////
             absdiff (pyr1[i][GRAY], pyr1[j][GRAY], resultsEven); // pyr1 - Even
             absdiff (resultsOdd, resultsEven, results);
-//            sprintf(win_name, "Motion-img%d-GRAY%d-%d",i_img, i, j);
+//            sprintf(win_name, "Motion-img%d-GRAY%d-%d",i_img-start_frame, i, j);
 //            display(win_name, results);
             regionals_averages(results, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -630,7 +633,7 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/motion-gray/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/motion-gray/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, results);
 
 ////////////// gabor-filters 0 45 90 135 ////////////////////////////////////////////
@@ -649,7 +652,7 @@ int main( int argc, char** argv )
 //              imshow(window_name, gaborKernel);
               filter2D(resultsOdd, gabor_outputOdd, ddepth, gaborKernel);
               filter2D(resultsEven, gabor_outputEven, ddepth, gaborKernel);
-//              sprintf(win_name, "img%d-gabor%d-gray%d-%d-Odd",i_img,180*k/4,i,j);
+//              sprintf(win_name, "img%d-gabor%d-gray%d-%d-Odd",i_img-start_frame,180*k/4,i,j);
 //              display(win_name, gabor_outputOdd);
               regionals_averages(gabor_outputOdd, average);
               for (int sec = 0; sec < 9; sec++) {
@@ -665,11 +668,11 @@ int main( int argc, char** argv )
                 fprintf(fp,"%lf\n", average[sec]);
                 fclose(fp);
               }
-              sprintf(filename, "./datapoints/gabor%d/fi%02d-%d-%d.png",180*k/4,i_img,i,j);
+              sprintf(filename, "./datapoints/gabor%d/fi%02d-%d-%d.png",180*k/4,i_img-start_frame,i,j);
               imwrite(filename, gabor_outputOdd);
 //////////////// motion gabor////////////////////////////////////////////////////////////
               absdiff (gabor_outputOdd, gabor_outputEven, results);
-//              sprintf(win_name, "img%d-motion-gabor%d-gray%d-%d.png",i_img,180*k/4,i,j);
+//              sprintf(win_name, "img%d-motion-gabor%d-gray%d-%d.png",i_img-start_frame,180*k/4,i,j);
 //              display(win_name, results);
               regionals_averages(results, average);
               for (int sec = 0; sec < 9; sec++) {
@@ -685,13 +688,13 @@ int main( int argc, char** argv )
                 fprintf(fp,"%lf\n", average[sec]);
                 fclose(fp);
               }
-              sprintf(filename, "./datapoints/motion-gabor%d/fi%02d-%d-%d.png",i_img,180*k/4,i,j);
+              sprintf(filename, "./datapoints/motion-gabor%d/fi%02d-%d-%d.png",i_img-start_frame,180*k/4,i,j);
               imwrite(filename, results);
             }
 
             // R_G
             absdiff (pyr2[i][RED]-pyr2[i][GREEN],pyr2[j][GREEN]-pyr2[j][RED], resultsOdd); //pyr2 - Odd
-//            sprintf(win_name, "img%d-R_G%d-%d",i_img,i,j);
+//            sprintf(win_name, "img%d-R_G%d-%d",i_img-start_frame,i,j);
 //            display(win_name, resultsOdd);
             regionals_averages(resultsOdd, average);
             for (int sec = 0; sec < 9; sec++) {
@@ -707,13 +710,13 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/R_G/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/R_G/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, resultsOdd);
 
             // motion R_G
             absdiff (pyr1[i][RED]-pyr1[i][GREEN],pyr1[j][GREEN]-pyr1[j][RED], resultsEven); //pyr1 - Even
             absdiff (resultsOdd, resultsEven, results);
-//            sprintf(win_name, "Motion-img%d-R_G%d-%d",i_img, i, j);
+//            sprintf(win_name, "Motion-img%d-R_G%d-%d",i_img-start_frame, i, j);
 //            display(win_name, results);
             regionals_averages(results, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -730,12 +733,12 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/motion-R_G/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/motion-R_G/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, results);
 
             // B_Y
             absdiff (pyr2[i][BLUE]-pyr2[i][YELLOW], pyr2[j][YELLOW]-pyr2[j][BLUE], resultsOdd); //pyr2 - Odd
-//            sprintf(win_name, "img%d-B_Y%d-%d",i_img,i,j);
+//            sprintf(win_name, "img%d-B_Y%d-%d",i_img-start_frame,i,j);
 //            display(win_name, resultsOdd);
             regionals_averages(resultsOdd, average);
             for (int sec = 0; sec < 9; sec++) {
@@ -751,13 +754,13 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/B_Y/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/B_Y/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, resultsOdd);
 
             // motion B_Y
             absdiff (pyr1[i][BLUE]-pyr1[i][YELLOW], pyr1[j][YELLOW]-pyr1[j][BLUE], resultsEven); //pyr1 - Even
             absdiff (resultsOdd, resultsEven, results);
-//            sprintf(win_name, "Motion-img%d-B_Y%d-%d",i_img, i, j);
+//            sprintf(win_name, "Motion-img%d-B_Y%d-%d",i_img-start_frame, i, j);
 //            display(win_name, results);
             regionals_averages(results, average);
             for (int sec = 0; sec < 9; sec++) 
@@ -774,7 +777,7 @@ int main( int argc, char** argv )
               fprintf(fp,"%lf\n", average[sec]);
               fclose(fp);
             }
-            sprintf(filename, "./datapoints/motion-B_Y/fi%02d-%d-%d.png",i_img,i,j);
+            sprintf(filename, "./datapoints/motion-B_Y/fi%02d-%d-%d.png",i_img-start_frame,i,j);
             imwrite(filename, results);
           } // end of for j
         } // end of if(pyr1.data && pyr2.data)
