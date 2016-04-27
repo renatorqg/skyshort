@@ -14,3 +14,11 @@ List of implemented features:
 
 **frequency domain**
 - Spectral-Residual [Xiaodi Hou's](http://www.klab.caltech.edu/~xhou/papers/cvpr07.pdf) paper, adapted from this [code](https://github.com/Itseez/opencv_contrib/blob/master/modules/saliency/src/staticSaliencySpectralResidual.cpp)
+
+# COMPILATION LINE
+
+g++ tgfsp.cpp `pkg-config --cflags --libs opencv`
+
+**Prerequisites**
+installed Opencv
+installed build-essencials
